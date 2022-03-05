@@ -1,5 +1,22 @@
+var repoNameEl = document.querySelector("#repo-name");
 var issueContainerEl = document.querySelector("#Issues-container");
 var limitWarningEl = document.querySelector("#limit-warning");
+
+  var getRepoName = function() {
+    var queryString = document.location.search;
+    var repoName = queryString.split("=") [1];
+    
+    if (repoName) {
+        repoNameEl.textContent = repoName;
+    }
+    
+    getRepoIssues(repoName);
+    } else {
+    document.location.replace("./index.html");
+    }
+   
+
+};
 
 
 var getRepoIssues = function(repo) {
@@ -11,11 +28,15 @@ var getRepoIssues = function(repo) {
         if (response.ok) {
             response.json().then(function(data) {
                 displayIssues(data);
-            });
+
+            if (response.headers.get("Link")) {
+                displayWarning(repo);
+            }
+         });
+        } else {
+         alert("./index.html");
         }
-        else {
-         alert("There was a problem with your request!");
-        }
+    });
 
         if (response.ok) {
             response.json().then(function(data) {
@@ -38,7 +59,7 @@ var getRepoIssues = function(repo) {
             issueEl.classlist = "list-item flex-row justify-space-between align-center";
             issueEl.setAttribute("href", issues[i].html_url);
             issueEl.setAttribute("target", "_blank");
-            issueContainerEl.appendChild(issueEl);
+           
 
             var titleEl = document.createElement("span");
             titleEl.textContent = issues[i].title;
@@ -55,6 +76,8 @@ var getRepoIssues = function(repo) {
             }
 
             issueEl,appendChild(typeEl);
+
+            issueContainerEl.appendChild(issueEl);
         }
     };
 
@@ -63,12 +86,11 @@ var getRepoIssues = function(repo) {
     };
 
     var linkEl = document.createElement("a");
-    linkEl.textContent = "See More Issues on GitHub.com";
+    linkEl.textContent = "GitHub.com";
     linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
     linkEl.setAttribute("target", "_blank");
 
     limitWarningEl.appendChild(linkEl);
-
-getRepoIssues("facebook/react");
-
+ 
+    getRepoName();
 }
