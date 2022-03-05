@@ -4,24 +4,21 @@ var limitWarningEl = document.querySelector("#limit-warning");
 
   var getRepoName = function() {
     var queryString = document.location.search;
-    var repoName = queryString.split("=") [1];
+    var repoName = queryString.split("=")[1];
     
     if (repoName) {
         repoNameEl.textContent = repoName;
-    }
+    
     
     getRepoIssues(repoName);
-    } else {
-    document.location.replace("./index.html");
+   } else {
+      document.location.replace("./index.html");
     }
-   
-
 };
 
 
 var getRepoIssues = function(repo) {
-    console.log(repo)
-
+    
     var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=asc";
     
     fetch(apiUrl).then(function(response) {
@@ -34,22 +31,12 @@ var getRepoIssues = function(repo) {
             }
          });
         } else {
-         alert("./index.html");
+         document.location.replace("./index.html");
         }
     });
+};
 
-        if (response.ok) {
-            response.json().then(function(data) {
-                displayIssues(data);
-
-                if (response.headers.get("Link")) {
-                    console.log("repo has more than 30 issues");
-                }
-            });
-        }
-});
-
-    var displayIssues = function(issues) {
+ var displayIssues = function(issues) {
         if (issues.length === 0) {
             issueContainerEl.textContent = "This repo has no open issues!";
             return;
@@ -83,7 +70,7 @@ var getRepoIssues = function(repo) {
 
     var displayWarning = function(repo) {
         limitWarningEl.textContent = "To see more than 30 issues, visit ";
-    };
+
 
     var linkEl = document.createElement("a");
     linkEl.textContent = "GitHub.com";
@@ -91,6 +78,5 @@ var getRepoIssues = function(repo) {
     linkEl.setAttribute("target", "_blank");
 
     limitWarningEl.appendChild(linkEl);
- 
+};
     getRepoName();
-}
